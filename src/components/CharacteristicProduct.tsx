@@ -1,8 +1,11 @@
 
 type Props = {
-    characteristics: Record<string, string | number>; // 👈 пара ключ: значение
+    characteristics: Record<string, string | number>;
   };
 
+
+// общий компонент, который отображет характеритику
+// принимает ключ и значение ключа
 export default function CharacteristicProduct({characteristics }:Props) {
     return (
         <ul
@@ -12,6 +15,7 @@ export default function CharacteristicProduct({characteristics }:Props) {
                 gap: "10px",
             }}
         >
+        {/* Отображение пропсов, переданных в компонент */}
         {Object.entries(characteristics).map(([key, value]) => (
             <li className="row" key={key}>
             <p style={{ whiteSpace: "nowrap" }}>{key}</p>

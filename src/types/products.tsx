@@ -1,12 +1,14 @@
 
 
 
+
 type Dimensions = {
     width: number,
     height: number,
     depth: number
   }
 
+// основной тип для товаров
 export  type Product = {
     id: number,
     image: string,

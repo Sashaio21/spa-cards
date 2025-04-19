@@ -26,14 +26,12 @@ type ProductPageProps = {
 
 
 
-type Props = {
-  productId: number;
-};
-
+// Страница продукта с более подробной информацией
 export default  function Product({ params }: ProductPageProps) {
-  
-  const {items, loading, error} = useSelector((state: RootState)=> state.products)
+  const {items} = useSelector((state: RootState)=> state.products)
+  // информация о текущем товаре 
   const [product, setProduct] = useState<Product | null>(null)
+  // переменная, в которой хранится id текущего товара
   const { productSlug } = use(params);
   const router = useRouter()
   
@@ -45,26 +43,12 @@ export default  function Product({ params }: ProductPageProps) {
     }
   }
 
-
+  // Поиск одного товара по id 
   useEffect(()=>{
     const foundProduct:Product|null = items.find((p)=>Number(p.id) === Number(productSlug)) || null
     setProduct(foundProduct || null)
     console.log(items.find((p)=>p.id === Number(productSlug)))  
   },[items])
-  const breadcrumbs = [
-    <Link href="/">
-      MUI
-    </Link>,
-    <Link
-      href={"/"}
-    >
-      Core
-    </Link>,
-    <Typography >
-      Breadcrumb
-    </Typography>,
-  ];
-
 
   return (
     <div>
@@ -75,6 +59,7 @@ export default  function Product({ params }: ProductPageProps) {
             alignItems: "center"
           }}
         >
+        {/* Кнопка назад */}
         <CustomButton
           variant="outlined"
           startIcon={<ArrowBack />}
@@ -82,6 +67,7 @@ export default  function Product({ params }: ProductPageProps) {
         >
         </CustomButton>
           <div>
+          {/* Хлебные крошки */}
           <Breadcrumbs separator="›" aria-label="breadcrumb">
           <Link href="/">
             Главная
@@ -135,6 +121,7 @@ export default  function Product({ params }: ProductPageProps) {
                 gap: "20px",
               }}
               >
+              {/* Отображение характеристик с помощью компонента CharacteristicProduct */}
               <CharacteristicProduct
                 characteristics={{
                   "Категория": product?.category ? String(product?.category) : "Не указано",
@@ -143,6 +130,7 @@ export default  function Product({ params }: ProductPageProps) {
                   "Минимальное кол-во при заказе": !isNaN(Number(product?.minimumOrderQuantity)) ? Number(product?.minimumOrderQuantity) : "Не указано"
                 }}
               />
+              {/* Отображение списка тегов */}
               <ul
               style={{
                 display: "flex",
@@ -166,9 +154,7 @@ export default  function Product({ params }: ProductPageProps) {
               </ul>
             </div>
           </div>
-          <div
-            className="col"
-            >
+          <div className="col">
             <div>
             </div>
             <h2>
@@ -178,6 +164,7 @@ export default  function Product({ params }: ProductPageProps) {
             <h2>
               Характеристики товара
             </h2>
+            {/* Отображение характеристик с помощью компонента CharacteristicProduct */}
             <CharacteristicProduct
               characteristics={{
                 "Гарантия": product?.warrantyInformation ? String(product?.warrantyInformation) : "Не указано",
@@ -198,6 +185,7 @@ export default  function Product({ params }: ProductPageProps) {
                   }}
               ></div>
             </div>
+            {/* Отображение характеристик с помощью компонента CharacteristicProduct */}
             <CharacteristicProduct
               characteristics={{
                 "Ширина": isNaN(Number(product?.dimensions.width)) ? "Неизвестно" : Number(product?.dimensions.width),
@@ -205,11 +193,10 @@ export default  function Product({ params }: ProductPageProps) {
                 "Глубина": isNaN(Number(product?.dimensions.depth)) ? "Неизвестно" : Number(product?.dimensions.depth),
                 "Вес": isNaN(Number(product?.weight)) ? "Неизвестно" : Number(product?.weight),
               }}
-              
             />
           </div>
         </div>
-
+        {/* Блок для отображения информации о цене */}
         <Card
           className="col"
           style={{
@@ -227,6 +214,7 @@ export default  function Product({ params }: ProductPageProps) {
             alignItems: "center"
           }}
           >
+            {/* Цена товара */}
             <PriceProduct>
               {product?.price}
             </PriceProduct>
@@ -241,6 +229,7 @@ export default  function Product({ params }: ProductPageProps) {
               -{(product?.discountPercentage)?.toFixed(0)}%
             </div>
           </div>
+          {/* Цена со скидкой */}
           <PriceDiscountPercentage >
           {(product?.price && product?.discountPercentage 
           ? (product.price - (product.discountPercentage * product.price / 100)).toFixed(2) 

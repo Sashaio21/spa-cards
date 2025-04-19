@@ -7,19 +7,26 @@ import { filterFavorites, searchByTitle } from "@/redux/slices/filterProductSlic
 
 
 
+// Компонент, в котором реализованы фильтры
+export default function FiltersBlock() {
 
-export default function FiltersBlock({}) {
+    // хранит список всех товаров
     const {items} = useSelector((state: RootState)=> state.products)
+    // хранит список отфильтрованных товаров, которые выводится на странице
     const {filteredProduct} = useSelector((state: RootState)=> state.filteredProduct)
+    
+    // Проверка, нажат ли переключатель для отображения избранных
     const [isChecked, setIsChecked] = useState<boolean>(false);
     const dispatch = useDispatch<AppDispatch>()
     
+
+    // отслежвание изменений компонента Input, для поиска товара без кнопки "Отправить"
     const productSearch = (event :React.ChangeEvent<HTMLInputElement> ) => {
         console.log(event.target.value)
         dispatch(searchByTitle({ searchTerm: event.target.value, products: items }))
     }
 
-
+    // отображение товаров, добавленных в изббранное
     function getFavoritesProduct(e: React.ChangeEvent<HTMLInputElement>) {
         setIsChecked(e.target.checked)
         if (e.target.checked) {
@@ -44,6 +51,7 @@ export default function FiltersBlock({}) {
                 gap: "20px"
             }}
             >
+            {/* переключатель для отображения избранных товаров */}
             <Card
                 className="row"
                 style={{
@@ -59,23 +67,26 @@ export default function FiltersBlock({}) {
                     onChange={getFavoritesProduct}
                 />
             </Card>
+            {/* Фильтры по ключу category */}
             <FiltresComponent 
                 keyName="category"
             />
+            {/* Фильтры по ключу tags */}
             <FiltresComponent 
                 keyName="tags"
             />
             </div>
+            {/* компонент для описка товаров */}
             <div className="row">
-                    <Input 
-                        placeholder="поиск по каталогу..."
-                        onChange={productSearch}
-                        style={{
-                            height: "35px",
-                            width: "200px"
-                        }}
-                    />
-                </div>
+                <Input 
+                    placeholder="поиск по каталогу..."
+                    onChange={productSearch}
+                    style={{
+                        height: "35px",
+                        width: "200px"
+                    }}
+                />
+            </div>
         </div>
     )
 }

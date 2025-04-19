@@ -9,30 +9,38 @@ import {Pagination} from "@mui/material";
 import FiltersBlock from "@/components/FiltersBlock";
 
 
-
+// Страница, где отобржается список товаров и фильтры
 export default function Products() {
-  const colCards:number = 5
+    // Количество карточек товаров на одной странице
+    const colCards:number = 5
 
-
+    // Состояние для скрытия/отображения избранных товаров
     const [favoritHidden, setFavoritHidden] = useState<boolean>(false)
-  const dispatch = useDispatch<AppDispatch>();
-  const {items} = useSelector((state: RootState)=> state.products)
-  const {filteredProduct} = useSelector((state: RootState)=> state.filteredProduct)
-  const [page, setPage] = useState<number>(1)
+
+    // Получаем диспетчер для вызова действий Redux
+    const dispatch = useDispatch<AppDispatch>();
+
+    // Все товары из глобального состояния Redux
+    const {items} = useSelector((state: RootState)=> state.products)
+
+    // Отфильтрованные товары из глобального состояния Redux
+    const {filteredProduct} = useSelector((state: RootState)=> state.filteredProduct)
+
+    // Текущая страница для пагинации
+    const [page, setPage] = useState<number>(1)
+
   
 
-
-  const handleClick = (event: React.ChangeEvent<unknown>, value: number) => {
-    console.log((value-1)*5)
-    console.log(((value-1)*5+5))
-    setPage(value)
-  }
+    // Отслеживание нажатия на элемент пагинации
+    const handleClick = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value)
+    }
 
 
-
-  useEffect(()=>{
-    dispatch(applyFilters(items))
-  },[items])
+    // Применение фильтров при изменении items
+    useEffect(()=>{
+      dispatch(applyFilters(items))
+    },[items])
 
 
 
@@ -49,15 +57,15 @@ export default function Products() {
       ):(
         <h2>Избранное</h2>
       )}
-        <FiltersBlock
-          
-        />
+        {/* Блок, в котором реализованы фильтры  */}
+        <FiltersBlock/>
         <div 
         className="col"
         style={{
           gap:"30px"
         }}
         >
+        {/* Список товаров */}
         <div
           style={{
             display: "flex",
@@ -68,6 +76,7 @@ export default function Products() {
           }}
           >
           {filteredProduct.slice((page-1)*colCards, ((page-1)*colCards+colCards)).map((obj, index) => (
+            // Карточка товара с краткой информацией
             <CardProduct
               key={index}
               id={obj.id}
@@ -78,6 +87,7 @@ export default function Products() {
             />
           ))}
         </div>
+        {/* Пагинация */}
         <Pagination
             style={{
               alignSelf: "center"

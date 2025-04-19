@@ -12,7 +12,6 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { putProduct } from "@/redux/slices/productsSlice";
 import { fetchAddProduct, fetchGetProducts } from "@/redux/slices/productsSlice";
 import { CustomButton } from "@/components/ui-elements";
-import { useSearchParams } from 'next/navigation';
 
 
 export default function CreateProduct() {
@@ -23,8 +22,7 @@ export default function CreateProduct() {
   const [inputTag, setInputTag] = useState<string>("")
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [urlImage, setUrlImage] = useState<string | null>(null)
-  const searchParams = useSearchParams();
-  const id = searchParams.get('id');
+
 
   const {
     register,
@@ -55,20 +53,10 @@ export default function CreateProduct() {
     setValue('tags', updatedTags); // обновляем форму
   };
 
-  useEffect(()=>{
-    if (id) {
-      const foundProduct:Product|null = items.find((p)=>p.id === Number(id)) || null
-      console.log((id))
-      
-      setOneProduct(foundProduct)
-      if (oneProduct) {
-        reset(oneProduct);
-      }
-      console.log(oneProduct?.brand)
-    }
-  },[oneProduct])
 
 
+  // Извлекает значения по заданному ключу из массива объектов и возвращает уникальные значения
+  // уникальные значения нужны для выбора из списка
   function pluckStringsOrNumbers<T, K extends keyof T>(
     items: T[],
     key: K
@@ -90,38 +78,32 @@ export default function CreateProduct() {
     return Array.from(new Set(filtered));
   }
 
-
+  // Ослеживание нажатия для отпраки данных
   const onSubmit: SubmitHandler<Product> = async (data:Product) => {
-      // Явное преобразование типов
+      // Преобрзование типов
       const transformedData: Product = {
         ...data,
-        price: Number(data.price), // преобразование строки в число
+        price: Number(data.price), 
         dimensions: {
           ...data.dimensions,
-          width: Number(data.dimensions.width), // преобразование строки в число
-          height: Number(data.dimensions.height), // преобразование строки в число
-          depth: Number(data.dimensions.depth), // преобразование строки в число
+          width: Number(data.dimensions.width), 
+          height: Number(data.dimensions.height),
+          depth: Number(data.dimensions.depth), 
         },
-        discountPercentage: Number(data.discountPercentage), // преобразование строки в число
+        discountPercentage: Number(data.discountPercentage),
         weight: Number(data.weight)
       };
     
-      console.log(transformedData);
       try {
-        if (id) {
-          const resultAction = await dispatch(putProduct({id: Number(id), data: transformedData}));
-          dispatch(fetchGetProducts());
-        } else if (!id){
+          // Добавление товара
           const resultAction = await dispatch(fetchAddProduct(transformedData));
           // Проверка на успешность
           if (fetchAddProduct.fulfilled.match(resultAction)) {
             console.log("Товар успешно добавлен:", resultAction.payload);
         }
-
+          // обновление данных в состоянии
           dispatch(fetchGetProducts());
-        } else {
-          console.error("Ошибка при добавлении товара");
-        }
+        
       } catch (err) {
         console.error("Ошибка при выполнении onSubmit:", err);
       }
@@ -129,7 +111,7 @@ export default function CreateProduct() {
   
   const deleteImage = () => {
     setUrlImage(null);
-    setValue("image", ""); // Очистка значения поля
+    setValue("image", ""); 
   };
   
 
@@ -257,7 +239,7 @@ export default function CreateProduct() {
               <Select
                 {...field}
                 className="w-[100%]"
-                value={field.value ?? ''} // защита от undefined
+                value={field.value ?? ''}
               >
                 {pluckStringsOrNumbers(items, "category").map((obj, index) => (
                   <MenuItem key={index} value={obj}>
@@ -311,14 +293,14 @@ export default function CreateProduct() {
         
 
         <Controller
-  name="tags"
-  control={control}
-  rules={{ required: 'Добавьте хотя бы один тег' }}
-  render={({ field }) => (
-    <div className="col" style={{ alignItems: "center", gap: "10px", width: "100%" }}>
-      <div className="row" style={{ alignItems: "center", gap: "10px", width: "100%" }}>
-        <label>Теги</label>
-        <div className="row" style={{ width: "100%" }}>
+          name="tags"
+          control={control}
+          rules={{ required: 'Добавьте хотя бы один тег' }}
+          render={({ field }) => (
+          <div className="col" style={{ alignItems: "center", gap: "10px", width: "100%" }}>
+          <div className="row" style={{ alignItems: "center", gap: "10px", width: "100%" }}>
+            <label>Теги</label>
+          <div className="row" style={{ width: "100%" }}>
           <Input
             value={inputTag}
             onChange={(e) => setInputTag(e.target.value)}
@@ -381,7 +363,7 @@ export default function CreateProduct() {
               <Select
                 {...field}
                 className="w-[100%]"
-                value={field.value ?? ''} // защита от undefined
+                value={field.value ?? ''}
               >
                 {pluckStringsOrNumbers(items, "brand").map((obj, index) => (
                   <MenuItem key={index} value={obj}>
@@ -482,7 +464,7 @@ export default function CreateProduct() {
           render={({ field, fieldState }) => (
             <TextField
               {...field}
-              value={field.value ?? ''} // <--- вот здесь защита от undefined
+              value={field.value ?? ''} 
               label="Высота"
               type="number"
               inputProps={{ step: 0.01 }}
@@ -498,7 +480,7 @@ export default function CreateProduct() {
         name="dimensions.depth"
         control={control}
         rules={{ required: 'Укажите глубину' }}
-        defaultValue={0}  // Убедись, что defaultValue задано
+        defaultValue={0} 
         render={({ field, fieldState }) => (
           <TextField
             {...field}
@@ -535,13 +517,9 @@ export default function CreateProduct() {
       <input
         type="hidden"
         {...register('tags', { required: 'Добавьте теги' })}
-        value={JSON.stringify(tags)} // 👈 вот это правильно!
+        value={JSON.stringify(tags)} 
       />
-        {id ? (
-          <CustomButton type="submit" >Редактировать</CustomButton>
-        ):(
-          <CustomButton type="submit" >Добавить</CustomButton>
-        )}
+        <CustomButton type="submit" >Добавить</CustomButton>
       </form>
       
     </div>

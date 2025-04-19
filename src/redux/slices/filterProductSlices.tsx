@@ -4,24 +4,27 @@ import type { Product } from "@/types/products";
 
 type Filter = Record<string, (string | number)[]>;
 
-
+// тип для инициализации состояния
 type ProductState = {
-  items: Product[];
-  filteredProduct: Product[];
-  filters: Filter;
-  listProductFavorites: number[]
+  filteredProduct: Product[]; // список отфлиьтрованных товаров
+  filters: Filter; // все фильтры
+  listProductFavorites: number[] // список избранных товаров
 };
 
+
+// инициализация состояния
 const initialState: ProductState = {
-  items: [],
   filteredProduct: [],
   filters: {},
   listProductFavorites: [],
 };
 
 
+// применение фильтра
+// параметры: список который нужно отфильтровать, фильтры
 function filterProductsByFilters(items: Product[], filters: Record<string, (string | number)[]>) {
   const filterKeys = Object.keys(filters);
+  // если фильтров нет, вернуть весь список без изменений
   if (filterKeys.length === 0) return items;
 
   return items.filter((product) => {
@@ -39,6 +42,7 @@ function filterProductsByFilters(items: Product[], filters: Record<string, (stri
         normalized = [String(productValue)];
       }
 
+      // возвращение списка отфильтрованных товаров
       return values.some(filterVal => normalized.includes(String(filterVal)));
     });
   });
@@ -51,12 +55,15 @@ const filteredProductSlice = createSlice({
   name: "productsFiltered",
   initialState,
   reducers: {
+    // добваление товара в избраное 
     addItem: ((state,action:PayloadAction<number>)=>{
       state.listProductFavorites.push(action.payload)
     }),
+    // удаление товара из избраных
     removeItem: ((state,action:PayloadAction<number>)=>{
         state.listProductFavorites = state.listProductFavorites.filter(favorites => favorites !== action.payload);
     }),
+    // поиск товара по ключу title
     searchByTitle(
       state,
       action: PayloadAction<{ searchTerm: string; products: Product[] }>
@@ -74,6 +81,7 @@ const filteredProductSlice = createSlice({
         product.title.toLowerCase().includes(normalizedSearch)
       );
     }, 
+    // возвращает список тоавров из избранных 
     filterFavorites(
       state,
       action: PayloadAction<{ shouldFilter: boolean; allProducts: Product[] }>
@@ -104,7 +112,6 @@ const filteredProductSlice = createSlice({
         delete state.filters[key];
         return;
       }
-    
       state.filters[key] = Array.from(new Set(values));
     },        
     // Применяем фильтры

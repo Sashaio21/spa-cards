@@ -8,11 +8,6 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import type { Product } from "@/types/products";
 
-
-
-
-
-
 type FiltresComponentProps = {
     keyName: string;
   }
@@ -23,19 +18,25 @@ type CheckedItems = {
 };
 
 
+// компонент реализует логику фильтрации по определнному ключ keyName
 export default function FiltresComponent({keyName}:FiltresComponentProps) {
     const [open, setOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const dispatch = useDispatch<AppDispatch>()
+    // хранит список всех товаров
     const {items} = useSelector((state: RootState)=> state.products)
-    const {filters} = useSelector((state: RootState)=> state.filteredProduct)
+
+    // сосстояние для отслежвания, выбран ли пункт списка для фильтра
     const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
+
 
     function capitalize(str: string): string {
       if (!str) return str;                          
         return str[0].toUpperCase() + str.slice(1);
     }
 
+    // Извлекает значения по заданному ключу из массива объектов и возвращает уникальные значения
+    // уникальные значения нужны для выбора из списка
     function pluck<T, K extends keyof T>(items: T[], key: K): (T[K] extends (infer U)[] ? U : T[K])[] {
       const rawValues = items.flatMap(item => {
         const value = item[key];
@@ -52,24 +53,23 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
     
     
     const rawValues = pluck(items, keyName as keyof Product);
+    // переменная, которая хранит все уникальные значения по ключу keyName
+    // переменная используется для создания списка фильтра 
     const labels = rawValues.filter(
       (v): v is string =>
         typeof v === "string" || typeof v === "number"
     );
 
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
-    setCheckedItems((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
-  };
+    // отслежвание выбора элемента списка
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, checked } = event.target;
+      setCheckedItems((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+    };
 
-  const test = (keyName:string) => {
-    console.log(checkedItems["beauty"])
-    console.log(filters)
-  };
   
     
   // функция для открытия модального окна 
@@ -84,7 +84,7 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
     }
   }
 
-
+  // применение фильтра
   const handleDone = (keyName: string) => {
     const values = Object.entries(checkedItems)
       .filter(([_, value]) => value)
@@ -96,9 +96,9 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
   
     console.log("Выбрано:", filterObject);
   
-    dispatch(setFilters({ key: keyName, values: filterObject[keyName] })); 
-    dispatch(applyFilters(items));
-    setOpen(false)
+    dispatch(setFilters({ key: keyName, values: filterObject[keyName] }));  // добавление нового фильтра
+    dispatch(applyFilters(items)); // применение фильтров
+    setOpen(false) // закрытие модального окна
   };
   
 
@@ -113,7 +113,9 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
             alignItems: "center"
           }}
         >
+          {/* заголовок */}
           {capitalize(keyName)}
+          {/* модальное окно */}
           <Popover
             open={open}
             anchorEl={anchorEl}
@@ -139,6 +141,7 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
               e.stopPropagation();
             }}>
               <FormGroup>
+                {/* список элементов для фильтра */}
                 {labels.map((label) => (
                   <FormControlLabel
                     key={label}
@@ -154,6 +157,7 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
                 ))} 
               </FormGroup>
               {/* <CustomButton onClick={()=>test(keyName)}>test</CustomButton> */}
+              {/* кнопка для применения фильтра */}
               <CustomButton onClick={()=>handleDone(keyName)}>Готово</CustomButton>
             </Card>
           </Popover>

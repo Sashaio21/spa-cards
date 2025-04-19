@@ -1,8 +1,8 @@
 import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
-import type { InputHTMLAttributes } from 'react';
 
 
+// кастомная кнопка 
 export const CustomButton = styled(Button)({
     backgroundColor: "#000",
     color: "#fff",
@@ -12,7 +12,7 @@ export const CustomButton = styled(Button)({
     },
   });
 
-
+// заголовок карточки товара
 export const TitleProduct = ({children}:Readonly<{children: React.ReactNode;}>) => {
     return (
         <p 
@@ -27,7 +27,7 @@ export const TitleProduct = ({children}:Readonly<{children: React.ReactNode;}>) 
 
 
 
-
+// описание карточки товара
 export const TitleDescription = ({children}:Readonly<{children: React.ReactNode;}>) => {
     return (
         <p
@@ -42,7 +42,7 @@ export const TitleDescription = ({children}:Readonly<{children: React.ReactNode;
     )
 }
 
-
+// цена карточки товара со скидкой
 export const PriceDiscountPercentage = ({children}:Readonly<{children: React.ReactNode;}>) => {
     return (
         <p
@@ -53,7 +53,7 @@ export const PriceDiscountPercentage = ({children}:Readonly<{children: React.Rea
     )
 }
 
-
+// цена карточки товара без скидки (зачёркнутый)
 export const PriceProduct = ({children}:Readonly<{children: React.ReactNode;}>) => {
     return (
         <p

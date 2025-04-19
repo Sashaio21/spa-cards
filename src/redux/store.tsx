@@ -2,10 +2,12 @@ import {configureStore} from "@reduxjs/toolkit"
 import productReducer from './slices/productsSlice'
 import filteredProduct from './slices/filterProductSlices'
 
+
+// общее хранилилще store
 export const store = configureStore({
     reducer: {
-        products : productReducer,
-        filteredProduct: filteredProduct
+        products : productReducer, // хранит все товары 
+        filteredProduct: filteredProduct // хранит все отфильтрованный товары
     }
 })
 

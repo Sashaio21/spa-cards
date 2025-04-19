@@ -1,18 +1,19 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import type { Product } from "@/types/products";
 
+// список всех товаров
 type ProductsList = {
   product: Product[];
 };
 
-
-
+// тип для инициализации состояния
 type ProductState = {
   items: Product[];
   loading: boolean;
   error: string | null;
 };
 
+// инициализация состояния
 const initialState: ProductState = {
   items: [],
   loading: false,
@@ -21,7 +22,7 @@ const initialState: ProductState = {
 
 
 
-
+// получение всех товаров
 export const fetchGetProducts = createAsyncThunk<ProductsList>(
   "products/fetchGetProducts",
   async () => {
@@ -34,7 +35,7 @@ export const fetchGetProducts = createAsyncThunk<ProductsList>(
   }
 );
 
-
+// добавление нового товара
 export const fetchAddProduct = createAsyncThunk<Product, Product>(
   "products/fetchAddProduct",
   async (productData: Product) => {
@@ -51,15 +52,17 @@ export const fetchAddProduct = createAsyncThunk<Product, Product>(
     }
 
     const data = await response.json();
-    return data; // возвращаем только добавленный товар
+    return data;
   }
 );
+
 
 
 const productSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
+    // удаление товара из хранилища
     deleteProduct(state, action: PayloadAction<number>) {
       state.items = state.items.filter(item => item.id !== action.payload);
     },
