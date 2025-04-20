@@ -4,19 +4,20 @@ import {useForm, SubmitHandler} from 'react-hook-form'
 import type { Product } from "@/types/products";
 import {Card} from "@mui/material";
 import { Controller } from "react-hook-form";
-import { Input, Select, MenuItem, TextField, Box } from "@mui/material";
+import { Autocomplete, Input, Select, MenuItem, TextField, Box } from "@mui/material";
 import '../../globals.css'
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { putProduct } from "@/redux/slices/productsSlice";
 import { fetchAddProduct, fetchGetProducts } from "@/redux/slices/productsSlice";
 import { CustomButton } from "@/components/ui-elements";
+import { pluckStringsOrNumbers } from "@/utilites/globalUtilites";
+import { useRouter } from "next/navigation";
 
 
 export default function CreateProduct() {
+  const router = useRouter()
   const dispatch = useDispatch<AppDispatch>()
-  const [oneProduct, setOneProduct] = useState<Product| null>(null)
   const {items} = useSelector((state: RootState)=> state.products)
   const [tags, setTags] = useState<string[]>([])
   const [inputTag, setInputTag] = useState<string>("")
@@ -55,28 +56,6 @@ export default function CreateProduct() {
 
 
 
-  // Извлекает значения по заданному ключу из массива объектов и возвращает уникальные значения
-  // уникальные значения нужны для выбора из списка
-  function pluckStringsOrNumbers<T, K extends keyof T>(
-    items: T[],
-    key: K
-  ): (string | number)[] {
-    const rawValues = items.flatMap(item => {
-      const value = item[key];
-      if (Array.isArray(value)) {
-        return value;
-      }
-      if (typeof value === "object" && value !== null) {
-        return Object.values(value);
-      }
-      return [value];
-    });
-    const filtered = rawValues.filter(
-      (v): v is string | number => typeof v === "string" || typeof v === "number"
-    );
-  
-    return Array.from(new Set(filtered));
-  }
 
   // Ослеживание нажатия для отпраки данных
   const onSubmit: SubmitHandler<Product> = async (data:Product) => {
@@ -100,6 +79,7 @@ export default function CreateProduct() {
           // Проверка на успешность
           if (fetchAddProduct.fulfilled.match(resultAction)) {
             console.log("Товар успешно добавлен:", resultAction.payload);
+            router.push("/products")
         }
           // обновление данных в состоянии
           dispatch(fetchGetProducts());
@@ -236,17 +216,23 @@ export default function CreateProduct() {
             control={control}
             rules={{ required: 'Выберите категорию' }}
             render={({ field }) => (
-              <Select
-                {...field}
+              <Autocomplete
                 className="w-[100%]"
+                freeSolo 
+                options={pluckStringsOrNumbers(items, "category")}
                 value={field.value ?? ''}
-              >
-                {pluckStringsOrNumbers(items, "category").map((obj, index) => (
-                  <MenuItem key={index} value={obj}>
-                    {obj}
-                  </MenuItem>
-                ))}
-              </Select>
+                onChange={(_, newValue) => field.onChange(newValue)}
+                onInputChange={(_, newInputValue) => field.onChange(newInputValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Категория"
+                    error={!!errors.category}
+                    helperText={errors.category?.message}
+                  />
+                )}
+                
+              />
             )}
           />
           {errors.category && (
@@ -360,17 +346,22 @@ export default function CreateProduct() {
             control={control}
             rules={{ required: 'Выберите бренд' }}
             render={({ field }) => (
-              <Select
-                {...field}
+              <Autocomplete
                 className="w-[100%]"
+                freeSolo 
+                options={pluckStringsOrNumbers(items, "brand")}
                 value={field.value ?? ''}
-              >
-                {pluckStringsOrNumbers(items, "brand").map((obj, index) => (
-                  <MenuItem key={index} value={obj}>
-                    {obj}
-                  </MenuItem>
-                ))}
-              </Select>
+                onChange={(_, newValue) => field.onChange(newValue)}
+                onInputChange={(_, newInputValue) => field.onChange(newInputValue)} 
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Бренд"
+                    error={!!errors.brand}
+                    helperText={errors.brand?.message}
+                  />
+                )}
+              />
             )}
           />
           {errors.brand && <p style={{ color: "#c95e4b" }}>{errors.brand.message}</p>}

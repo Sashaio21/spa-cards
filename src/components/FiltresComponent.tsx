@@ -1,5 +1,5 @@
 import {Card,Popover} from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {FormGroup, FormControlLabel, Checkbox} from "@mui/material";
 import { useSelector } from "react-redux";
 import { CustomButton } from "./ui-elements";
@@ -7,6 +7,7 @@ import { setFilters, applyFilters } from "@/redux/slices/filterProductSlices";
 import { useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import type { Product } from "@/types/products";
+import { pluckStringsOrNumbers } from "@/utilites/globalUtilites";
 
 type FiltresComponentProps = {
     keyName: string;
@@ -28,37 +29,18 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
 
     // сосстояние для отслежвания, выбран ли пункт списка для фильтра
     const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
-
+    // хранит список фильтров (filters), которые выводится на странице
+    const {filters} = useSelector((state: RootState)=> state.filteredProduct)
 
     function capitalize(str: string): string {
       if (!str) return str;                          
         return str[0].toUpperCase() + str.slice(1);
     }
 
-    // Извлекает значения по заданному ключу из массива объектов и возвращает уникальные значения
-    // уникальные значения нужны для выбора из списка
-    function pluck<T, K extends keyof T>(items: T[], key: K): (T[K] extends (infer U)[] ? U : T[K])[] {
-      const rawValues = items.flatMap(item => {
-        const value = item[key];
-        if (Array.isArray(value)) {
-          return value;
-        }
-        if (typeof value === "object" && value !== null) {
-          return Object.values(value);
-        }
-        return [value];
-      });
-      return Array.from(new Set(rawValues));
+    const test = () => {
+      console.log(checkedItems)
     }
-    
-    
-    const rawValues = pluck(items, keyName as keyof Product);
-    // переменная, которая хранит все уникальные значения по ключу keyName
-    // переменная используется для создания списка фильтра 
-    const labels = rawValues.filter(
-      (v): v is string =>
-        typeof v === "string" || typeof v === "number"
-    );
+
 
 
     // отслежвание выбора элемента списка
@@ -100,6 +82,21 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
     dispatch(applyFilters(items)); // применение фильтров
     setOpen(false) // закрытие модального окна
   };
+
+
+  useEffect(() => {
+    const result: CheckedItems = {};
+    console.log("список товаров");
+  
+    for (const values of Object.values(filters)) {
+      for (const value of values) {
+        result[String(value)] = true;
+      }
+    }
+  
+    console.log(result);
+    setCheckedItems(result);
+  }, []);
   
 
     return(
@@ -142,21 +139,20 @@ export default function FiltresComponent({keyName}:FiltresComponentProps) {
             }}>
               <FormGroup>
                 {/* список элементов для фильтра */}
-                {labels.map((label) => (
+                {pluckStringsOrNumbers(items, keyName as keyof Product).map((label) => (
                   <FormControlLabel
                     key={label}
                     control={
                       <Checkbox
                         checked={checkedItems[label] || false}
                         onChange={handleChange}
-                        name={label}
+                        name={String(label)}
                       />
                     }
                     label={label}
                   />
                 ))} 
               </FormGroup>
-              {/* <CustomButton onClick={()=>test(keyName)}>test</CustomButton> */}
               {/* кнопка для применения фильтра */}
               <CustomButton onClick={()=>handleDone(keyName)}>Готово</CustomButton>
             </Card>

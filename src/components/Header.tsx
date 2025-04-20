@@ -1,9 +1,9 @@
 import { CustomButton } from "./ui-elements"
-import Image from "next/image";
 import Link from "next/link";
-import {Input} from "@mui/material"
 import '../app/globals.css'
 
+
+// шапка веб-приложения
 export default function Header() {
     return (
         <header 

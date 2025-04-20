@@ -1,19 +1,15 @@
 'use client'
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Card } from "@mui/material";
-import {Breadcrumbs, Typography} from "@mui/material";
+import {Breadcrumbs} from "@mui/material";
 import { CustomButton } from "@/components/ui-elements";
 import CharacteristicProduct from "@/components/CharacteristicProduct";
 import { PriceProduct, PriceDiscountPercentage } from "@/components/ui-elements";
 import { useEffect, use, useState } from "react";
 import Image from "next/image";
 import "../../globals.css"
-import {Button} from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-import EditIcon from '@mui/icons-material/Edit';
-import { UseDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Product } from "@/types/products";

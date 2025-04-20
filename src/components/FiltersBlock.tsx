@@ -12,8 +12,10 @@ export default function FiltersBlock() {
 
     // хранит список всех товаров
     const {items} = useSelector((state: RootState)=> state.products)
-    // хранит список отфильтрованных товаров, которые выводится на странице
-    const {filteredProduct} = useSelector((state: RootState)=> state.filteredProduct)
+    // хранит список отфильтрованных товаров (filteredProduct), которые выводится на странице
+    // хранит список фильтров (filters), которые выводится на странице
+    const {filteredProduct, filters} = useSelector((state: RootState)=> state.filteredProduct)
+    
     
     // Проверка, нажат ли переключатель для отображения избранных
     const [isChecked, setIsChecked] = useState<boolean>(false);
