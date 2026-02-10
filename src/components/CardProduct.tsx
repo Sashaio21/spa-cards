@@ -19,6 +19,7 @@ type ProductData = {
     description: string
     price: number,
     discountPercentage: number,
+    image: string
 }
 
 
@@ -26,7 +27,7 @@ type ProductData = {
 // отображается на странице "Список товаров"
 // параметры: id, title, description, price, discountPercentage
 export default function CardProduct({
-    id, title, description, price, discountPercentage
+    id, title, description, price, discountPercentage, image
 }:ProductData) {
     const router = useRouter()
     const dispatch = useDispatch()
