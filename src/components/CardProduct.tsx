@@ -76,12 +76,21 @@ export default function CardProduct({
                 position: "relative"
             }}>
               {/* Изображение товара */}
-                <Image
-                    src="/product_image.png"     
-                    alt="Описание"
-                    width={250}
-                    height={250}
-                />
+                <div
+                  style={{
+                    width: 250,
+                    height: 250,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "2px dashed gray",
+                    borderRadius: 8,
+                    fontSize: 48,
+                    color: "gray",
+                  }}
+                >
+                  {icon || "📦"} {/* Можно передать текст-иконку или emoji */}
+                </div>
                 {/* отображение пустого сердечка (FavoriteIcon) или заккращенного сердечка (FavoriteBorder) */}
                 {/* проверка, есть ли id в списке listProductFavorites */}
                 {listProductFavorites.includes(id) ? (
