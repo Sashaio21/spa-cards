@@ -84,6 +84,7 @@ export default function Products() {
               description={obj.description}
               price={obj.price}
               discountPercentage={obj.discountPercentage}
+                image={obj.image}
             />
           ))}
         </div>
